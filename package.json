@@ -1,0 +1,22 @@
+{
+  "name": "strava-activities-activator",
+  "version": "0.0.1",
+  "description": "Upload Strava activities from a spreadsheet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielmdeal/strava-activities-activator.git"
+  },
+  "keywords": [
+    "strava"
+  ],
+  "author": "Gabriel M Deal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabrielmdeal/strava-activities-activator/issues"
+  },
+  "homepage": "https://github.com/gabrielmdeal/strava-activities-activator#readme"
+}
