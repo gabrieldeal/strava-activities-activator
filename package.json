@@ -4,6 +4,7 @@
   "description": "Upload Strava activities from a spreadsheet",
   "main": "index.js",
   "scripts": {
+    "create": "./bin/create.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/gabrielmdeal/strava-activities-activator/issues"
   },
-  "homepage": "https://github.com/gabrielmdeal/strava-activities-activator#readme"
+  "homepage": "https://github.com/gabrielmdeal/strava-activities-activator#readme",
+  "dependencies": {
+    "commander": "^2.10.0",
+    "strava-v3": "^1.14.0",
+    "xlsx": "^0.10.5"
+  }
 }
