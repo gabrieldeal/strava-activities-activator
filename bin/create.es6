@@ -9,26 +9,29 @@ import opn from 'opn';
 import request from 'request';
 import { URL } from 'url';
 
-function handle_create(payload) {
+function handleCreatedActivity(payload) {
   console.log('Created this activity: ', payload);
 }
 
-function create_activity({ access_token,
-                           on_create,
+function createActivity({ accessToken,
+                          handleCreatedActivity,
                            activity })
 {
-  const handle_response = (err, payload) => {
+  const handleResponse = (err, payload) => {
     if(err) {
       throw new Error(err.msg);
     }
-    on_create(payload);
+    handleCreatedActivity(payload);
   };
-  const args = { access_token, ...activity, };
+  const args = {
+    ...activity,
+    access_token: accessToken
+  };
 
-  Strava.activities.create(args, handle_response);
+  Strava.activities.create(args, handleResponse);
 }
 
-function read_spreadsheet(spreadsheet) {
+function readSpreadsheet(spreadsheet) {
   var wb = XLSX.readFile(spreadsheet);
   var ws = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
 
@@ -66,7 +69,7 @@ function makeTokenExchangeRequest({ clientId, clientSecret, code, handleAccessTo
   request.post({ url, form }, handleTokenExchangeResponse);
 }
 
-function start_webserver(handleAuthorizeCode, port) {
+function startWebserver(handleAuthorizeCode, port) {
   const culledHandleRequest = (request, response) =>
         handleAuthorizeRedirectRequest({ handleAuthorizeCode, request, response });
   const server = HTTP.createServer(culledHandleRequest);
@@ -80,7 +83,7 @@ function start_webserver(handleAuthorizeCode, port) {
 function doStravaAuthorization({ handleAccessToken, clientId, clientSecret, port }) {
   const handleAuthorizeCode = (code) =>
         makeTokenExchangeRequest({ clientId, clientSecret, code, handleAccessToken });
-  start_webserver(handleAuthorizeCode, port)
+  startWebserver(handleAuthorizeCode, port)
 
   const redirectUrl = `http://localhost:${port}/code`;
 
@@ -104,7 +107,7 @@ function main() {
     .option('-p, --port [port]', 'HTTP port to run webserver on')
     .parse(process.argv);
 
-  //read_spreadsheet(Commander.spreadsheet);
+  //readSpreadsheet(Commander.spreadsheet);
 
   const activity = {
     name: "The name",
@@ -115,9 +118,9 @@ function main() {
     'private': 1
   };
   const culledCreateActivity = (accessToken) =>
-        create_activity({ activity,
-                          access_token: accessToken,
-                          on_create: handle_create });
+        createActivity({ activity,
+                         accessToken,
+                         handleCreatedActivity });
   doStravaAuthorization({ handleAccessToken: culledCreateActivity,
                           clientId: Commander.clientId,
                           clientSecret: Commander.clientSecret,
