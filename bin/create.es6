@@ -4,20 +4,23 @@ import Commander from 'commander';
 import XLSX from 'xlsx';
 import Strava from 'strava-v3';
 
-function handle_athlete_load(athlete) {
-  console.log(athlete);
+function handle_create(payload) {
+  console.log(payload);
 }
 
-function load_athelete(access_token, on_athelete_load) {
+function create_activity({ access_token,
+                           on_create,
+                           activity })
+{
   const handle_response = (err, payload) => {
     if(err) {
       throw new Error(err.msg);
     }
-    on_athelete_load(payload);
+    on_create(payload);
   };
-  const args = { access_token: '7c978e025222c704fd0bcf884dada3146ecda921' };
+  const args = { access_token, ...activity, };
 
-  Strava.athlete.get(args, handle_response);
+  Strava.activities.create(args, handle_response);
 }
 
 function read_spreadsheet(spreadsheet) {
@@ -37,7 +40,18 @@ function main() {
     .parse(process.argv);
 
   read_spreadsheet(Commander.spreadsheet);
-  load_athelete(Commander.access_token, handle_athlete_load);
+
+  const activity = {
+    name: "The name",
+    type: "Hike",
+    start_date_local: new Date().toISOString(),
+    elapsed_time: 600,
+    distance: 100,
+    'private': 1
+  };
+  create_activity({ access_token: Commander.accessToken,
+                    on_create: handle_create,
+                    activity });
 }
 
 main();
