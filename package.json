@@ -4,6 +4,7 @@
   "description": "Upload Strava activities from a spreadsheet",
   "main": "index.js",
   "scripts": {
+    "__COMMENT": "npm run create -- --spreadsheet test/fixture/hayduke.xlsx",
     "create": "./bin/create.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint --ignore-pattern node_modules **/*.js **/*.es6"
