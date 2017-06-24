@@ -25,6 +25,7 @@
   "dependencies": {
     "babel-register": "^6.24.1",
     "commander": "^2.10.0",
+    "opn": "^5.1.0",
     "strava-v3": "^1.14.0",
     "xlsx": "^0.10.5"
   },
