@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "__COMMENT": "npm run create -- --spreadsheet test/fixture/hayduke.xlsx",
-    "create": "./bin/create.js",
+    "create": "babel-node ./bin/create.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint --ignore-pattern node_modules **/*.js **/*.es6"
   },
@@ -22,17 +22,22 @@
     "url": "https://github.com/gabrielmdeal/strava-activities-activator/issues"
   },
   "homepage": "https://github.com/gabrielmdeal/strava-activities-activator#readme",
+  "babel": {
+    "presets": [
+      "es2015-node5",
+      "stage-0"
+    ]
+  },
   "dependencies": {
-    "babel-register": "^6.24.1",
+    "babel-cli": "^6.2.4",
+    "babel-preset-es2015-node5": "^1.1.0",
+    "babel-preset-stage-0": "^6.24.1",
     "commander": "^2.10.0",
-    "opn": "^5.1.0",
-    "request": "^2.81.0",
     "strava-v3": "^1.14.0",
+    "strava-v3-cli-authenticator": "^0.0.1",
     "xlsx": "^0.10.5"
   },
   "devDependencies": {
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
     "eslint": "^4.0.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.6.0",

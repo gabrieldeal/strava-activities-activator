@@ -3,8 +3,8 @@
 import Commander from 'commander';
 import Strava from 'strava-v3';
 import XLSX from 'xlsx';
+import authorize from 'strava-v3-cli-authenticator';
 
-import { doStravaAuthorization } from '../lib/strava/authenticator.es6';
 
 function handleCreatedActivity(payload) {
   console.log('Created this activity: ', payload);
@@ -62,10 +62,11 @@ function main() {
         createActivity({ activity,
                          accessToken,
                          handleCreatedActivity });
-  doStravaAuthorization({ handleAccessToken: culledCreateActivity,
-                          clientId: Commander.clientId,
-                          clientSecret: Commander.clientSecret,
-                          port: Commander.port || 8888 });
+  authorize({ accessTokenCallback: culledCreateActivity,
+              clientId: Commander.clientId,
+              clientSecret: Commander.clientSecret,
+              scope: "write",
+              httpPort: Commander.port || 8888 });
 }
 
 main();
