@@ -6,7 +6,7 @@ import XLSX from 'xlsx';
 import authorize from 'strava-v3-cli-authenticator';
 import moment from 'moment';
 
-function createActivities(activities, accessToken) {
+function createActivities (activities, accessToken) {
   const callback = (newActivity) => {
     console.log('Uploaded this activity: ', newActivity);
   };
@@ -20,10 +20,9 @@ function createActivities(activities, accessToken) {
   });
 }
 
-function createActivity({ accessToken, activity }, callback)
-{
+function createActivity ({ accessToken, activity }, callback) {
   const handleResponse = (err, payload) => {
-    if(err) {
+    if (err) {
       throw new Error(err.msg);
     }
     callback(payload);
@@ -36,7 +35,7 @@ function createActivity({ accessToken, activity }, callback)
   Strava.activities.create(args, handleResponse);
 }
 
-function toSeconds(duration) {
+function toSeconds (duration) {
   if (!duration) {
     return undefined;
   }
@@ -67,7 +66,7 @@ function convertToActivity (spreadsheetRow) {
     return undefined;
   }
 
-  activity.name = "Day " + spreadsheetRow['Day'] + ": to " + spreadsheetRow['Name'];
+  activity.name = 'Day ' + spreadsheetRow['Day'] + ': to ' + spreadsheetRow['Name'];
   if (!spreadsheetRow['Name'] || !spreadsheetRow['Day']) {
     return undefined;
   }
@@ -82,30 +81,31 @@ function convertToActivity (spreadsheetRow) {
   return activity;
 }
 
-function isValidActivity (activity) {
-  return !activity.values().find((value) => !value);
-}
-
-function readSpreadsheet(spreadsheet) {
+function readSpreadsheet (spreadsheet) {
   var wb = XLSX.readFile(spreadsheet);
   var ws = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
 
   return ws.map((row) => convertToActivity(row))
-           .filter((activity) => activity);
+    .filter((activity) => activity);
 }
 
-function authorizeAndCreateActivities(activities) {
-  const callback = (error, accessToken) => createActivities(activities, accessToken);
+function authorizeAndCreateActivities (activities) {
+  const callback = (error, accessToken) => {
+    if (error) {
+      throw new Error(error);
+    }
+    createActivities(activities, accessToken);
+  }
   const options = {
     clientId: Commander.clientId,
     clientSecret: Commander.clientSecret,
-    scope: "write",
+    scope: 'write',
     httpPort: Commander.port || 8888
   };
   authorize(options, callback);
 }
 
-function main() {
+function main () {
   Commander.version('0.1.0')
     .option('-s, --spreadsheet <spreadsheet>', 'Spreadsheet containing the activity data')
     .option('-a, --access-token <access_token>', 'Strava application access token')
@@ -117,7 +117,7 @@ function main() {
     .parse(process.argv);
 
   const activities = readSpreadsheet(Commander.spreadsheet);
-  activities.forEach((activity) => activity.name = `${Commander.namePrefix}${activity.name}`);
+  activities.forEach((activity) => { activity.name = `${Commander.namePrefix}${activity.name}`; });
   if (!Commander.upload) {
     console.log(activities);
     console.log('Not uploading. Use --upload to upload.');
@@ -127,6 +127,5 @@ function main() {
   console.log(activities);
   authorizeAndCreateActivities(activities);
 }
-
 
 main();
