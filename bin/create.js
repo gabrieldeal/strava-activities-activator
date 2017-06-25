@@ -4,40 +4,106 @@ import Commander from 'commander';
 import Strava from 'strava-v3';
 import XLSX from 'xlsx';
 import authorize from 'strava-v3-cli-authenticator';
+import moment from 'moment';
 
+function createActivities(activities, accessToken) {
+  const callback = (newActivity) => {
+    console.log('Uploaded this activity: ', newActivity);
+  };
 
-function handleCreatedActivity(payload) {
-  console.log('Created this activity: ', payload);
+  activities.forEach((activity) => {
+    const options = {
+      accessToken,
+      activity
+    };
+    createActivity(options, callback);
+  });
 }
 
-function createActivity({ accessToken,
-                          handleCreatedActivity,
-                           activity })
+function createActivity({ accessToken, activity }, callback)
 {
   const handleResponse = (err, payload) => {
     if(err) {
       throw new Error(err.msg);
     }
-    handleCreatedActivity(payload);
+    callback(payload);
   };
   const args = {
     ...activity,
     access_token: accessToken
   };
-
+  console.log(args);
   Strava.activities.create(args, handleResponse);
+}
+
+function toSeconds(duration) {
+  if (!duration) {
+    return undefined;
+  }
+
+  const match = duration.match(/^(\d+):(\d+)$/);
+  if (!match) {
+    return undefined;
+  }
+
+  const hours = match[1];
+  const minutes = match[2];
+  return hours * 60 * 60 + minutes * 60;
+}
+
+function convertToActivity (spreadsheetRow) {
+  const activity = {
+    type: 'Hike'
+  };
+
+  const startMoment = moment(spreadsheetRow['Start'], 'YYYY/MM/DD HH:ss');
+  if (!startMoment.isValid()) {
+    return undefined;
+  }
+  activity.start_date_local = startMoment.toISOString();
+
+  activity.elapsed_time = toSeconds(spreadsheetRow['Duration']);
+  if (!activity.elapsed_time) {
+    return undefined;
+  }
+
+  activity.name = "Day " + spreadsheetRow['Day'] + ": to " + spreadsheetRow['Name'];
+  if (!spreadsheetRow['Name'] || !spreadsheetRow['Day']) {
+    return undefined;
+  }
+
+  const miles = spreadsheetRow['Miles'];
+  if (!miles) {
+    return undefined;
+  }
+  const metersPerMile = 1609.34;
+  activity.distance = miles * metersPerMile;
+
+  return activity;
+}
+
+function isValidActivity (activity) {
+  return !activity.values().find((value) => !value);
 }
 
 function readSpreadsheet(spreadsheet) {
   var wb = XLSX.readFile(spreadsheet);
   var ws = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
 
-  ws.filter((row) => row['Day'])
-    .forEach((row) => {
-      console.log(row);
-    });
+  return ws.map((row) => convertToActivity(row))
+           .filter((activity) => activity);
 }
 
+function authorizeAndCreateActivities(activities) {
+  const callback = (error, accessToken) => createActivities(activities, accessToken);
+  const options = {
+    clientId: Commander.clientId,
+    clientSecret: Commander.clientSecret,
+    scope: "write",
+    httpPort: Commander.port || 8888
+  };
+  authorize(options, callback);
+}
 
 function main() {
   Commander.version('0.1.0')
@@ -46,31 +112,21 @@ function main() {
     .option('-c, --client-id <client_id>', 'Strava application client ID')
     .option('-S, --client-secret <client_secret>', 'Strava application client secret')
     .option('-p, --port [port]', 'HTTP port to run webserver on')
+    .option('-P, --name-prefix <name_prefix>', 'Activity name prefix', '')
+    .option('-n, --upload', 'Print the activities but do not upload them to Strava')
     .parse(process.argv);
 
-  //readSpreadsheet(Commander.spreadsheet);
+  const activities = readSpreadsheet(Commander.spreadsheet);
+  activities.forEach((activity) => activity.name = `${Commander.namePrefix}${activity.name}`);
+  if (!Commander.upload) {
+    console.log(activities);
+    console.log('Not uploading. Use --upload to upload.');
+    return;
+  }
 
-  const activity = {
-    name: "The name",
-    type: "Hike",
-    start_date_local: new Date().toISOString(),
-    elapsed_time: 600,
-    distance: 100,
-    'private': 1
-  };
-  const culledCreateActivity = (error, accessToken) =>
-        createActivity({
-          activity,
-          accessToken,
-          handleCreatedActivity
-        });
-  const authorizeArgs = {
-    clientId: Commander.clientId,
-    clientSecret: Commander.clientSecret,
-    scope: "write",
-    httpPort: Commander.port || 8888
-  };
-  authorize(authorizeArgs, culledCreateActivity);
+  console.log(activities);
+  authorizeAndCreateActivities(activities);
 }
+
 
 main();
