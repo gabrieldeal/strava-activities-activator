@@ -124,7 +124,6 @@ function main () {
     return;
   }
 
-  console.log(activities);
   authorizeAndCreateActivities(activities);
 }
 
