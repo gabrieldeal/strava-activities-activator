@@ -57,22 +57,26 @@ function convertToActivity (spreadsheetRow) {
 
   const startMoment = moment(spreadsheetRow['Start'], 'YYYY/MM/DD HH:mm');
   if (!startMoment.isValid()) {
+    console.log("Missing or invalid 'Start'.");
     return undefined;
   }
   activity.start_date_local = startMoment.toISOString();
 
   activity.elapsed_time = toSeconds(spreadsheetRow['Duration']);
   if (!activity.elapsed_time) {
+    console.log("Missing or invalid 'Duration'.");
     return undefined;
   }
 
   activity.name = 'Day ' + spreadsheetRow['Day'] + ': to ' + spreadsheetRow['Name'];
   if (!spreadsheetRow['Name'] || !spreadsheetRow['Day']) {
+    console.log("Missing or 'Day' or 'Name'.");
     return undefined;
   }
 
   const miles = spreadsheetRow['Miles'];
   if (!miles) {
+    console.log("Missing 'Miles'.");
     return undefined;
   }
   const metersPerMile = 1609.34;
