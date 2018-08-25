@@ -55,7 +55,7 @@ function convertToActivity (spreadsheetRow) {
     type: 'Hike'
   };
 
-  const startMoment = moment(spreadsheetRow['Start'], 'YYYY/MM/DD HH:ss');
+  const startMoment = moment(spreadsheetRow['Start'], 'YYYY/MM/DD HH:mm');
   if (!startMoment.isValid()) {
     return undefined;
   }
