@@ -112,8 +112,8 @@ function authorizeAndCreateActivities (activities) {
 function main () {
   Commander.version('0.1.0')
     .option('-s, --spreadsheet <spreadsheet>', 'Spreadsheet containing the activity data')
-    .option('-c, --client-id <client_id>', 'Strava application client ID')
-    .option('-S, --client-secret <client_secret>', 'Strava application client secret')
+    .option('-c, --client-id <client_id>', 'Strava application client ID from https://www.strava.com/settings/api')
+    .option('-S, --client-secret <client_secret>', 'Strava application client secret from https://www.strava.com/settings/api')
     .option('-p, --port [port]', 'HTTP port to run webserver on')
     .option('-P, --name-prefix <name_prefix>', 'Activity name prefix', '')
     .option('-n, --upload', 'Upload the activities to Strava')
