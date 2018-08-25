@@ -116,7 +116,7 @@ function main () {
     .option('-S, --client-secret <client_secret>', 'Strava application client secret')
     .option('-p, --port [port]', 'HTTP port to run webserver on')
     .option('-P, --name-prefix <name_prefix>', 'Activity name prefix', '')
-    .option('-n, --upload', 'Print the activities but do not upload them to Strava')
+    .option('-n, --upload', 'Upload the activities to Strava')
     .parse(process.argv);
 
   const activities = readSpreadsheet(Commander.spreadsheet);
