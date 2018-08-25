@@ -112,7 +112,6 @@ function authorizeAndCreateActivities (activities) {
 function main () {
   Commander.version('0.1.0')
     .option('-s, --spreadsheet <spreadsheet>', 'Spreadsheet containing the activity data')
-    .option('-a, --access-token <access_token>', 'Strava application access token')
     .option('-c, --client-id <client_id>', 'Strava application client ID')
     .option('-S, --client-secret <client_secret>', 'Strava application client secret')
     .option('-p, --port [port]', 'HTTP port to run webserver on')
