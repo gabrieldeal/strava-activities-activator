@@ -12,4 +12,4 @@ Creates Strava activities from a spreadsheet.
 
 ## Usage
 
-`npm run create --help`
+`npm run create -- --help`
