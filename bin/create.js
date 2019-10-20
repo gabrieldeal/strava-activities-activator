@@ -57,7 +57,12 @@ function convertToActivity (spreadsheetRow) {
 
   const startMoment = moment(spreadsheetRow['Start'], 'YYYY/MM/DD HH:mm');
   if (!startMoment.isValid()) {
-    console.log("Missing or invalid 'Start'.");
+    console.log(
+      "Missing or invalid 'Start' for day " +
+        spreadsheetRow["Day"] +
+        ": " +
+        spreadsheetRow["Start"]
+    );
     return undefined;
   }
   activity.start_date_local = startMoment.toISOString();
