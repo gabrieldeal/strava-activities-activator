@@ -108,7 +108,7 @@ function authorizeAndCreateActivities (activities) {
   const options = {
     clientId: Commander.clientId,
     clientSecret: Commander.clientSecret,
-    scope: 'write',
+    scope: "activity:write",
     httpPort: Commander.port || 8888
   };
   authorize(options, callback);
