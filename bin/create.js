@@ -59,9 +59,9 @@ function convertToActivity (spreadsheetRow) {
   if (!startMoment.isValid()) {
     console.log(
       "Missing or invalid 'Start' for day " +
-        spreadsheetRow["Day"] +
-        ": " +
-        spreadsheetRow["Start"]
+      spreadsheetRow['Day'] +
+      ': ' +
+      spreadsheetRow['Start']
     );
     return undefined;
   }
@@ -108,7 +108,7 @@ function authorizeAndCreateActivities (activities) {
   const options = {
     clientId: Commander.clientId,
     clientSecret: Commander.clientSecret,
-    scope: "activity:write",
+    scope: 'activity:write',
     httpPort: Commander.port || 8888
   };
   authorize(options, callback);
